@@ -164,6 +164,22 @@ La CMP se solicita solo después de aceptar anuncios; AdSense espera su señal. 
 
 Las posiciones son bajo el menú (excepto páginas de episodio), entre secciones del inicio, lateral sticky de escritorio, cada tres párrafos y debajo del bloque de reproducción y navegación. Nunca hay un anuncio delante del reproductor, superpuesto ni adyacente: existe una separación de al menos 48 px además del contenido intermedio. Se cargan al acercarse al viewport y se limita a tres slots visibles por pantalla. El espacio se conserva aunque el proveedor esté bloqueado para evitar saltos.
 
+## Preparar el lanzamiento
+
+Sigue [la lista de lanzamiento por roles](docs/lanzamiento.md): incluye comandos, evidencia y capturas esperadas para Pages, dominio/TLS, redirecciones, Search Console, variables, ads.txt y CMP. La indexación tiene una opción independiente, `PUBLIC_INDEXING_ENABLED=false` por defecto, para mantener noindex y robots bloqueado incluso al cambiar de dominio. Mantiene anuncios apagados y noindex; preparar una cuenta no acredita su aprobación ni la indexación.
+
+```sh
+npm run preflight
+npm run preflight -- --strict
+npm run preflight -- --cmp-required --json
+npm run project:plan
+npm run project:import -- --owner PROPIETARIO --project NUMERO --apply
+```
+
+`preflight` lee las variables inyectadas y `.env`, no imprime sus valores ni los modifica. Por defecto avisa sin bloquear; `--strict` termina con 1 ante requisitos incompletos. Comprueba dominio, nombre, correo, cliente/slots y ads.txt coherentes, y CMP si se declara aplicable. Una configuración completa no demuestra licencias, aprobación de AdSense ni certificación de CMP.
+
+El tablero se prepara a partir de las 45 tareas del plan en `docs/project-tasks.json`. Sin `--apply`, el importador solo imprime la propuesta. Con `--apply` y permiso de Projects crea borradores en un tablero existente y evita duplicados por identificador. CODEOWNERS contiene los tres roles como reglas comentadas: rellenar usuarios/equipos reales y descomentarlas antes de exigir revisiones automáticas.
+
 ## Cloudflare Pages
 
 1. Sube los cambios al repositorio y crea un proyecto **Pages** conectado a GitHub.
