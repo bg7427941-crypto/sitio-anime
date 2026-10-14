@@ -92,10 +92,10 @@ test('cinco plantillas sin desbordamiento y capturas para revisión visual', asy
     ).toBe(true);
     await page.locator('img').evaluateAll((elements) =>
       Promise.all(
-        elements.map((element) => {
+        elements.map(async (element) => {
           const image = element as HTMLImageElement;
           image.loading = 'eager';
-          return image.decode().catch(() => undefined);
+          await image.decode().catch(() => undefined);
         }),
       ),
     );
