@@ -37,4 +37,5 @@ jobs:
           path: |
             test-results/
             .cache/link-report.json
+            .cache/visual/
           if-no-files-found: ignore
