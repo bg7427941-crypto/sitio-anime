@@ -58,6 +58,21 @@ public/                    ads.txt, _headers, favicon y Open Graph
 
 No hay backend, base de datos, cuentas, comentarios ni sincronización. Las búsquedas usan los datos del HTML generado; `search-index.json` ofrece también el índice completo para futuras integraciones. Favoritos, tema y hasta veinte últimos episodios visitados viven en localStorage. El historial registra visitas, no minutos vistos. Si el navegador bloquea el almacenamiento, las funciones básicas siguen disponibles sin persistencia.
 
+## Herramientas editoriales
+
+```sh
+npm run content:report
+npm run content:report -- --json
+npm run new:series -- <slug>
+npm run new:article -- <slug>
+```
+
+El informe guarda `.cache/content-report.json`: distingue series reales, muestras, artículos definitivos, borradores y episodios con `verified: true`, cuenta palabras sin comentarios ni URLs Markdown y muestra las metas 20/50/30. Una meta pendiente no falla el comando. Sí fallan campos inválidos, imágenes inexistentes, episodios duplicados o textos publicados fuera de 150–300 palabras. Los borradores incompletos emiten avisos y no cuentan para metas; ningún campo sustituye la verificación humana de derechos.
+
+Los generadores crean borradores `draft: true`, `placeholder: true`, sin vídeos, y rechazan slugs peligrosos o archivos existentes. Los borradores quedan excluidos del catálogo, rutas, metadatos y verificación de vídeos. Completa la plantilla de `templates/`, revisa con otra persona y solo entonces cambia `draft`. No cambies `placeholder` hasta tener una obra real comprobada.
+
+La persona 3 dispone de [una hoja CSV vacía de ejemplo](docs/lista-series-ejemplo.csv) y del issue **Verificación manual de un episodio**. Documenta titular, vínculo del canal con el titular, audio/subtítulos, regiones realmente revisadas, fecha, permiso de incrustación y alternativa legal. La fila PENDIENTE no representa una obra ni una licencia.
+
 ## Añadir una serie
 
 Copia una ficha de `src/content/series/` con un nombre de archivo único en kebab-case. Su nombre determina `/series/<nombre>/`. Conserva todos los campos del esquema:

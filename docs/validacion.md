@@ -34,3 +34,9 @@ Informes completos en `.cache/performance/`; se regeneran con `npm run perf`. Es
 La petición real a Jikan recibió un rechazo HTTP 403 del proxy de salida. Se guardaron en el borrador del entorno los dominios `api.jikan.moe`, `cdn.myanimelist.net` y `www.youtube.com`, junto con `install_script` y `start_skill`. Hace falta aplicar y publicar esos ajustes para comprobar la conexión real; las muestras funcionan sin API.
 
 La publicación en Cloudflare Pages, indexación en Google, fuentes de vídeo reales, aprobación de AdSense y configuración de una CMP certificada pertenecen al lanzamiento descrito en el README. Las acciones de GitHub están preparadas en el repositorio; su ejecución remota depende de subir estos cambios. Los objetivos editoriales de veinte/cincuenta series legales y treinta artículos definitivos siguen pendientes.
+
+## Bloque 1: preparación editorial
+
+`content:report` informa 0 series reales, 5 muestras, 0 artículos definitivos, 4 muestras editoriales y 0 vídeos verificados. Las series tienen entre 208 y 221 palabras con el contador editorial. Las metas 20/50/30 están pendientes y el comando termina correctamente.
+
+Se añadieron pruebas del informe, rechazo de textos cortos y episodios duplicados, creación de borradores, exclusión de metas y prevención de sobrescritura/escape de rutas. La comprobación humana se prepara con un issue específico y un CSV sin datos reales inventados.

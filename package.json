@@ -19,7 +19,10 @@
     "test:unit": "node --test tests/*.test.mjs",
     "perf": "node scripts/performance.mjs",
     "predev": "node scripts/refresh-metadata.mjs",
-    "test:ads": "node scripts/test-ads.mjs"
+    "test:ads": "node scripts/test-ads.mjs",
+    "content:report": "node scripts/content-report.mjs",
+    "new:series": "node scripts/new-content.mjs series",
+    "new:article": "node scripts/new-content.mjs article"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
