@@ -30,6 +30,7 @@ npm test
 npm run test:ads
 npm run perf
 npm run verify:videos
+npm run check:links
 ```
 
 Las pruebas de navegador requieren Chromium. Se usa `/usr/bin/chromium` si está disponible; fuera de este entorno ejecuta `npx playwright install chromium` o configura `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. `npm test` necesita un `dist/` recién compilado. El servidor de pruebas aplica las cabeceras CSP de Cloudflare; `astro preview` no las aplica. Las pruebas publicitarias compilan una variante aislada en `.cache/ads-build`, con identificadores ficticios y proveedores simulados; no sirven anuncios reales.
@@ -172,6 +173,12 @@ Las posiciones son bajo el menú (excepto páginas de episodio), entre secciones
 5. Conecta el dominio y configura la redirección permanente desde el subdominio anterior mediante Cloudflare. Actualiza canónicas/Search Console si cambia el origen.
 
 `public/_headers` declara CSP, protección de iframes del sitio, tipos MIME y política de referencia. El build genera `dist/_headers` con hashes de los scripts inline ejecutables; **publica siempre el resultado completo de `npm run build`**. Permite YouTube, AdSense y analítica, sin `unsafe-inline` para scripts; los estilos inline se permiten para el proveedor publicitario. Los assets con hash se cachean durante un año. Las fuentes Outfit y DM Sans se autoalojan con sus licencias Fontsource; no se conecta con Google Fonts.
+
+## Calidad de enlaces, teclado y diseño
+
+`npm run check:links` recorre el HTML de `dist/`: comprueba rutas, recursos y anclas internos y los enlaces externos HTTPS. Solo un 404/410 confirmado mediante HEAD y GET se considera roto. Bloqueos 401/403, límites 429, errores 5xx, DNS, TLS y timeouts se registran como `unknown`; no hacen fallar CI ni se presentan como enlaces correctos. `--internal-only` permite una comprobación sin red. El informe queda en `.cache/link-report.json`. Se limita la concurrencia a cuatro destinos, no se envían credenciales y se bloquean destinos privados y redirecciones hacia ellos.
+
+`npm test` usa anchos exactos de **360 y 1280 px**. Axe revisa doce rutas en temas claro y oscuro; se comprueban el orden y retorno del foco en preferencias, la activación del reproductor con Enter, la ausencia de tabindex positivo y `prefers-reduced-motion`. Las cinco plantillas principales generan capturas en `.cache/visual/`. El pulido mantiene dimensiones de imágenes y reserva de anuncios: títulos equilibrados, texto de lectura de 68ch, CTA móviles fuera de la columna estrecha y foco visible en portadas.
 
 ## CI, recompilación y lanzamiento
 

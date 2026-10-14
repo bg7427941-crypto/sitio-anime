@@ -22,7 +22,8 @@
     "test:ads": "node scripts/test-ads.mjs",
     "content:report": "node scripts/content-report.mjs",
     "new:series": "node scripts/new-content.mjs series",
-    "new:article": "node scripts/new-content.mjs article"
+    "new:article": "node scripts/new-content.mjs article",
+    "check:links": "node scripts/check-links.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -42,6 +43,7 @@
     "@types/sanitize-html": "^2.16.2",
     "eslint": "^10.12.0",
     "eslint-plugin-astro": "^3.2.1",
+    "htmlparser2": "^10.1.0",
     "lighthouse": "^13.5.0",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.1",
