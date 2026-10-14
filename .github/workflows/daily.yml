@@ -1,0 +1,43 @@
+name: Refresh and verify daily
+on:
+  schedule:
+    - cron: '20 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: .cache/
+          key: metadata-${{ github.run_id }}
+          restore-keys: metadata-
+      - run: node scripts/refresh-metadata.mjs --force
+      - run: npm run verify:videos
+      - run: npm run build
+      - name: Trigger Cloudflare Pages rebuild
+        env:
+          DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$DEPLOY_HOOK" ]; then
+            case "$DEPLOY_HOOK" in
+              https://api.cloudflare.com/client/v4/pages/webhooks/*) curl --fail --silent --show-error -X POST "$DEPLOY_HOOK" ;;
+              *) echo 'Invalid Cloudflare deploy hook host'; exit 1 ;;
+            esac
+          else
+            echo 'Build validated; add CLOUDFLARE_DEPLOY_HOOK to publish daily.'
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: daily-reports
+          path: .cache/video-report.json
+          if-no-files-found: ignore

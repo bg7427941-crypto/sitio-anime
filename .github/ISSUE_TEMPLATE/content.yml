@@ -1,0 +1,25 @@
+name: Incorporar una serie legal
+description: Revisar fuentes, disponibilidad y contenido editorial antes de publicar.
+title: 'Contenido: '
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Título y enlace a la fuente de datos
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Fuentes oficiales y países revisados
+      description: Canal del licenciatario, enlaces a episodios completos y alternativa legal.
+    validations:
+      required: true
+  - type: checkboxes
+    id: review
+    attributes:
+      label: Revisión editorial
+      options:
+        - label: Canal, episodios, idioma y disponibilidad regional verificados manualmente.
+        - label: Texto propio de 150 a 300 palabras y permiso de portada revisados.
+        - label: No hay vídeos subidos por nosotros ni reproductores de terceros no autorizados.
