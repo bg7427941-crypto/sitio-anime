@@ -48,3 +48,11 @@ Se amplió axe a doce rutas, en ambos temas y en anchos exactos de 360 y 1280 px
 El comprobador de enlaces recorrió 29 páginas: 682 referencias internas accesibles, cero fallos y cuatro destinos externos con estado desconocido por fallo de red. No se contaron como éxitos. Las pruebas cubren rutas/anclas inexistentes, HEAD frente a GET, 404/410, 403/429/5xx, timeout y bloqueo de destinos privados/redirecciones.
 
 La suite ampliada completa 26 pruebas de navegador aprobadas y nueve pruebas unitarias/de integración. Lighthouse móvil local tras el pulido mantiene 99–100 en rendimiento, 100 en accesibilidad y CLS 0 en cinco rutas.
+
+## Bloque 3: lanzamiento
+
+Se probó `preflight` con configuración ausente, datos sintéticos aislados, ads.txt incompatible y CMP obligatoria. El modo normal avisa sin cambiar archivos ni variables; el modo estricto falla si falta configuración. No se han activado anuncios ni quitado noindex.
+
+El tablero contiene las 45 tareas de las fases 0–3, con los tres roles y condiciones de salida del plan. Se verificaron identificadores únicos y exclusión de duplicados al reimportar. Se validó la vista previa; no se importó un tablero remoto ni se inventaron responsables. Las capturas de `lanzamiento.md` describen evidencia esperada en cuentas del equipo, no resultados externos obtenidos aquí.
+
+Se compiló una variante aislada con un origen distinto de example.com y `PUBLIC_INDEXING_ENABLED=false`: inicio conserva `noindex,follow` y robots conserva `Disallow: /`. Esto separa la preparación de dominio de una futura autorización de indexación.

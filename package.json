@@ -23,7 +23,10 @@
     "content:report": "node scripts/content-report.mjs",
     "new:series": "node scripts/new-content.mjs series",
     "new:article": "node scripts/new-content.mjs article",
-    "check:links": "node scripts/check-links.mjs"
+    "check:links": "node scripts/check-links.mjs",
+    "preflight": "node scripts/preflight.mjs",
+    "project:plan": "node scripts/project-board.mjs",
+    "project:import": "node scripts/project-board.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
