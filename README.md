@@ -31,6 +31,7 @@ npm run test:ads
 npm run perf
 npm run verify:videos
 npm run check:links
+npm run maintenance:report
 ```
 
 Las pruebas de navegador requieren Chromium. Se usa `/usr/bin/chromium` si está disponible; fuera de este entorno ejecuta `npx playwright install chromium` o configura `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. `npm test` necesita un `dist/` recién compilado. El servidor de pruebas aplica las cabeceras CSP de Cloudflare; `astro preview` no las aplica. Las pruebas publicitarias compilan una variante aislada en `.cache/ads-build`, con identificadores ficticios y proveedores simulados; no sirven anuncios reales.
@@ -198,13 +199,29 @@ El tablero se prepara a partir de las 45 tareas del plan en `docs/project-tasks.
 
 ## CI, recompilación y lanzamiento
 
-`ci.yml` ejecuta instalación con lockfile, ESLint, Prettier, chequeo TypeScript/Astro, pruebas de contenido, build y navegador por PR y en `main`. `daily.yml` actualiza metadatos, verifica vídeos, compila y conserva un informe **cada día a las 06:20 UTC**. Un error de vídeo hace fallar la acción; configura notificaciones de GitHub para revisar el informe.
+`ci.yml` ejecuta instalación con lockfile, ESLint, Prettier, chequeo TypeScript/Astro, pruebas de contenido, build y navegador por PR y en `main`. `daily.yml` actualiza metadatos, verifica vídeos, compila y conserva un informe **cada día a las 06:20 UTC**. Los fallos confirmados de vídeo hacen fallar la acción; bloqueos y fallos de red quedan como desconocidos. Configura notificaciones de GitHub para revisar el informe.
 
 Para que esa acción publique también, crea un Deploy Hook de Pages y guarda la URL como secreto de GitHub **`CLOUDFLARE_DEPLOY_HOOK`**. Sin ese secreto, la acción valida el build pero no publica. Las compilaciones de Pages al recibir un push siguen funcionando a través de la integración GitHub. No pongas el hook en una variable `PUBLIC_`.
 
 Configura protección de `main` con revisión de otra persona y el check `validate` requerido. Usa la plantilla de issue de contenido y crea el tablero de GitHub Projects con las fases del plan. Ninguna de esas configuraciones administrativas se ha cambiado desde el entorno.
 
 Para indexar, publica primero contenido definitivo y configura el dominio. Verifica la propiedad en Google Search Console con DNS o `PUBLIC_GOOGLE_SITE_VERIFICATION`, y envía `/sitemap-index.xml`. Activar Cloudflare Web Analytics requiere un token público de beacon. Vuelve a medir con PageSpeed Insights en el dominio real y después de activar cada proveedor.
+
+## Revisar y fusionar los bloques
+
+Los cuatro PR están encadenados: editorial → calidad → lanzamiento → mantenimiento. Revisarlos en ese orden. Después de fusionar un bloque en `main`, cambiar la base del siguiente PR a `main` antes de fusionarlo (GitHub puede hacerlo automáticamente al eliminar la rama anterior). Cada diff muestra así el bloque pendiente y los cambios terminan en la rama principal. No se han fusionado PR desde esta tarea.
+
+## Mantenimiento semanal
+
+Dependabot propone actualizaciones semanales de npm y GitHub Actions, los lunes a las 06:30 de Chicago; agrupa parches/menores sin fusionarlos automáticamente. Las actualizaciones mayores y los cambios de stack siguen sujetos a revisión.
+
+`weekly.yml` ejecuta build, verificación de vídeos y comprobación de enlaces cada lunes a las 12:40 UTC (07:40 en Chicago durante CDT, 06:40 durante CST), además de permitir ejecución manual. Conserva JSON/Markdown en el artefacto `maintenance-reports` y crea **un issue por semana**, incluso si no hay incidencias confirmadas. Repetir la ejecución actualiza solo el bloque generado del mismo issue, conserva las notas humanas y no reabre un issue cerrado. Las ejecuciones se serializan para evitar duplicados.
+
+El job que instala dependencias y hace peticiones de red solo tiene lectura. La publicación se hace en otro job, sin instalar dependencias, con permiso `issues: write`; no hay publicación desde PR ni `pull_request_target`. Los informes incompletos o anteriores al inicio de la ejecución se indican como tales y los fallos de comandos conservan su resultado de error, aunque se llegue a publicar el informe. Las rutas concretas de artefactos incluyen archivos ocultos para conservar `.cache/*-report.json` sin subir configuración o cachés completas.
+
+Para revisar informes locales, ejecuta `npm run verify:videos`, `npm run check:links` y `npm run maintenance:report`. El último comando **solo genera archivos locales** y no crea issues. Usa informes de hasta 24 horas; CI exige los de su propia ejecución. Los vídeos ficticios se omiten; una respuesta oEmbed accesible no acredita licencias, regiones ni permiso de incrustación. Un 404/410 es un aviso para revisar, no una prueba de retirada mundial. Los `unknown` no se cuentan como enlaces correctos.
+
+P1 revisa infraestructura y enlaces; P3 revisa vídeos, evidencia y alternativas; P2 comprueba las fichas corregidas. El workflow semanal y Dependabot quedarán activos al fusionar sus archivos en la rama predeterminada y requieren Actions e Issues habilitados. La creación/actualización de issues se prueba con una API simulada: todavía no se ha ejecutado la tarea semanal en producción.
 
 ## Lo que depende del equipo
 

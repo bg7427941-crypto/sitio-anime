@@ -26,7 +26,8 @@
     "check:links": "node scripts/check-links.mjs",
     "preflight": "node scripts/preflight.mjs",
     "project:plan": "node scripts/project-board.mjs",
-    "project:import": "node scripts/project-board.mjs"
+    "project:import": "node scripts/project-board.mjs",
+    "maintenance:report": "node scripts/maintenance-report.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

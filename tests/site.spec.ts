@@ -27,15 +27,28 @@ test('inicio, tema y consentimiento sin recursos externos', async ({
 test('búsqueda, género y estado vacío', async ({ page }) => {
   await page.goto('/catalogo/');
   await page.getByRole('button', { name: 'Rechazar', exact: true }).click();
-  await page.getByRole('searchbox').fill('neon');
+  await page.getByRole('searchbox').fill('Ecos de neon');
   await expect(page.locator('[data-search-card]:visible')).toHaveCount(1);
   await page.getByRole('button', { name: 'Limpiar filtros' }).click();
   await page.locator('#genre-filter').selectOption('Fantasía');
-  await expect(page.locator('[data-search-card]:visible')).toHaveCount(1);
+  await expect(
+    page.getByRole('heading', { name: 'El jardín de las nubes' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Ecos de neón' }),
+  ).toBeHidden();
   await page.getByRole('searchbox').fill('inexistente');
   await expect(page.locator('#search-empty')).toBeVisible();
   await page.goto('/catalogo/?genero=Drama');
-  await expect(page.locator('[data-search-card]:visible')).toHaveCount(2);
+  await expect(
+    page.getByRole('heading', { name: 'La chica del mar' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Último tren a Kioto' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Ecos de neón' }),
+  ).toBeHidden();
 });
 test('favoritos persistentes y eliminación', async ({ page }) => {
   await page.goto('/catalogo/');

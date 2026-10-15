@@ -103,7 +103,7 @@ npm run preflight -- --cmp-required --json
 ## 7. Operación y evidencias — P1, revisión de P2/P3
 
 - [ ] Configurar `CLOUDFLARE_DEPLOY_HOOK` como secreto de GitHub para publicar la recompilación diaria; sin hook se valida el build sin desplegar.
-- [ ] Comprobar Actions y notificaciones de fallos. Revisar vídeos/enlaces semanalmente, especialmente 404/410; los bloqueos regionales y de red requieren comprobación humana.
+- [ ] Comprobar Actions, el workflow `weekly.yml`, Dependabot e Issues habilitados. El informe semanal crea o actualiza un issue por semana después de fusionar el bloque 4. Revisar vídeos/enlaces semanalmente, especialmente 404/410; los bloqueos regionales y de red requieren comprobación humana.
 - [ ] P3 atiende avisos de derechos, revisa fuentes y amplía el catálogo; P2 comprueba móvil/accesibilidad; P1 mantiene dependencias, build y despliegue.
 - [ ] Conservar evidencia de cada condición de salida: publicación + 20 series legales; experiencia móvil con episodios oficiales; 50 series + 30 artículos + indexación/tráfico; aprobación e ingresos reales en fase 3.
 
