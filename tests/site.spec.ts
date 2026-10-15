@@ -95,7 +95,9 @@ test('el reproductor conecta con YouTube solo al pulsar, usando fixture aislada'
   await page.getByRole('button', { name: 'Rechazar', exact: true }).click();
   expect(videos).toEqual([]);
   await expect(page.locator('iframe')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Reproducir desde YouTube' }).click();
+  await page.getByRole('button', { name: 'Reproducir desde YouTube' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('iframe')).toBeFocused();
   await expect(page.locator('iframe')).toHaveAttribute(
     'src',
     'https://www.youtube-nocookie.com/embed/abcdefghijk?autoplay=1&rel=0',
@@ -179,6 +181,11 @@ for (const theme of ['dark', 'light'])
       '/articulos/por-donde-empezar/',
       '/calendario/',
       '/contacto/',
+      '/articulos/',
+      '/favoritos/',
+      '/privacidad/',
+      '/derechos/',
+      '/acerca-de/',
     ]) {
       await page.goto(path);
       await page.evaluate((value) => {

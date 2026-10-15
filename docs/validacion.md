@@ -40,3 +40,11 @@ La publicación en Cloudflare Pages, indexación en Google, fuentes de vídeo re
 `content:report` informa 0 series reales, 5 muestras, 0 artículos definitivos, 4 muestras editoriales y 0 vídeos verificados. Las series tienen entre 208 y 221 palabras con el contador editorial. Las metas 20/50/30 están pendientes y el comando termina correctamente.
 
 Se añadieron pruebas del informe, rechazo de textos cortos y episodios duplicados, creación de borradores, exclusión de metas y prevención de sobrescritura/escape de rutas. La comprobación humana se prepara con un issue específico y un CSV sin datos reales inventados.
+
+## Bloque 2: calidad
+
+Se amplió axe a doce rutas, en ambos temas y en anchos exactos de 360 y 1280 px. Se añadieron recorridos con teclado, foco del iframe simulado, respeto a movimiento reducido, ausencia de desbordamiento y capturas de las cinco plantillas principales. Se corrigió la vuelta del foco desde el último control de preferencias, el foco recortado de portadas y el contraste transitorio al cambiar de tema (el color de los botones cambia sin interpolación), y se reorganizaron los CTA de fichas en móvil.
+
+El comprobador de enlaces recorrió 29 páginas: 682 referencias internas accesibles, cero fallos y cuatro destinos externos con estado desconocido por fallo de red. No se contaron como éxitos. Las pruebas cubren rutas/anclas inexistentes, HEAD frente a GET, 404/410, 403/429/5xx, timeout y bloqueo de destinos privados/redirecciones.
+
+La suite ampliada completa 26 pruebas de navegador aprobadas y nueve pruebas unitarias/de integración. Lighthouse móvil local tras el pulido mantiene 99–100 en rendimiento, 100 en accesibilidad y CLS 0 en cinco rutas.
