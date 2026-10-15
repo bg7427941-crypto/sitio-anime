@@ -1,0 +1,54 @@
+name: Verificación manual de un episodio
+description: Evidencia humana de titularidad, idioma, regiones y permiso de incrustación.
+title: 'Revisión de episodio: '
+body:
+  - type: input
+    id: episode
+    attributes:
+      label: Serie, episodio y ruta de la ficha
+    validations:
+      required: true
+  - type: textarea
+    id: ownership
+    attributes:
+      label: Titular/licenciatario y prueba de que el canal le pertenece
+      description: Enlaces a la web del titular y al canal; un nombre parecido o un logo no son prueba suficiente.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Vídeo, idioma, regiones revisadas y fecha de comprobación
+      description: Indicar audio, subtítulos, país desde el que se revisó y limitaciones. No inferir disponibilidad mundial.
+    validations:
+      required: true
+  - type: textarea
+    id: embedding
+    attributes:
+      label: Permiso de incrustación y alternativa legal
+      description: Documentar condiciones del titular y prueba del reproductor. oEmbed accesible no acredita una licencia.
+    validations:
+      required: true
+  - type: input
+    id: reviewer
+    attributes:
+      label: Persona revisora del equipo y fecha
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Comprobación humana antes de verified=true
+      options:
+        - label: Identifiqué al titular/licenciatario y la relación del canal con él.
+          required: true
+        - label: Es el episodio completo correcto; comprobé audio y subtítulos.
+          required: true
+        - label: Documenté únicamente las regiones verificadas y su fecha.
+          required: true
+        - label: Revisé permiso y funcionamiento de la incrustación y la alternativa legal.
+          required: true
+        - label: No es una subida propia, una copia de terceros ni un reproductor pirata.
+          required: true
+        - label: Otra persona del equipo revisará la evidencia antes de publicar.
+          required: true
