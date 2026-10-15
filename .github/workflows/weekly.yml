@@ -1,0 +1,81 @@
+name: Weekly maintenance report
+on:
+  schedule:
+    - cron: '40 12 * * 1'
+  workflow_dispatch:
+concurrency:
+  group: weekly-maintenance-${{ github.repository }}
+  cancel-in-progress: false
+permissions: {}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      report_ready: ${{ steps.report.outcome == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Record start of this run
+        run: node -e "console.log('REPORT_STARTED_AT='+new Date().toISOString())" >> "$GITHUB_ENV"
+      - run: npm ci
+      - id: build
+        run: npm run build
+        continue-on-error: true
+      - id: videos
+        if: always()
+        run: npm run verify:videos
+        continue-on-error: true
+      - id: links
+        if: always() && steps.build.outcome == 'success'
+        run: npm run check:links
+        continue-on-error: true
+      - id: report
+        if: always()
+        run: node scripts/maintenance-report.mjs
+        env:
+          REPORT_BUILD_OUTCOME: ${{ steps.build.outcome }}
+          REPORT_VIDEOS_OUTCOME: ${{ steps.videos.outcome }}
+          REPORT_LINKS_OUTCOME: ${{ steps.links.outcome }}
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.report.outcome == 'success'
+        with:
+          include-hidden-files: true
+          name: maintenance-reports
+          path: |
+            .cache/maintenance-report.json
+            .cache/maintenance-report.md
+            .cache/video-report.json
+            .cache/link-report.json
+          retention-days: 30
+      - name: Preserve failed check outcomes
+        if: always() && (steps.build.outcome == 'failure' || steps.videos.outcome == 'failure' || steps.links.outcome == 'failure')
+        run: exit 1
+  publish:
+    needs: audit
+    if: always() && needs.audit.outputs.report_ready == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: maintenance-reports
+          path: reports
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('node:fs/promises');
+            const { publishMaintenanceIssue } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/maintenance-report.mjs`);
+            const report = JSON.parse(await fs.readFile('reports/maintenance-report.json', 'utf8'));
+            await publishMaintenanceIssue(github, context.repo, report);

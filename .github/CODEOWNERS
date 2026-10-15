@@ -1,0 +1,18 @@
+# PLANTILLA INACTIVA: rellenar los tres usuarios/equipos y descomentar reglas.
+# P1 = Infraestructura y datos. P2 = Frontend y diseño. P3 = Contenido, SEO y monetización.
+# Los marcadores NO identifican cuentas reales ni solicitan revisiones automáticas.
+# Para varias personas responsables de un patrón, ponerlas juntas en la misma línea.
+# Las reglas más específicas deben quedar después de las generales.
+# * @REEMPLAZAR_PERSONA_1 @REEMPLAZAR_PERSONA_2 @REEMPLAZAR_PERSONA_3
+# /.github/ @REEMPLAZAR_PERSONA_1
+# /scripts/ @REEMPLAZAR_PERSONA_1
+# /astro.config.mjs @REEMPLAZAR_PERSONA_1
+# /src/data/ @REEMPLAZAR_PERSONA_1
+# /src/components/ @REEMPLAZAR_PERSONA_2
+# /src/layouts/ @REEMPLAZAR_PERSONA_2
+# /src/pages/ @REEMPLAZAR_PERSONA_2
+# /src/styles/ @REEMPLAZAR_PERSONA_2
+# /src/assets/ @REEMPLAZAR_PERSONA_2 @REEMPLAZAR_PERSONA_3
+# /src/content/ @REEMPLAZAR_PERSONA_3
+# /docs/ @REEMPLAZAR_PERSONA_3
+# /public/ads.txt @REEMPLAZAR_PERSONA_1 @REEMPLAZAR_PERSONA_3

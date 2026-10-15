@@ -17,8 +17,11 @@ jobs:
       - run: npm ci
       - run: node scripts/refresh-metadata.mjs
       - run: npm run lint && npm run format:check && npm run check
+      - run: npm run content:report
+      - run: npm run preflight
       - run: npm run test:unit
       - run: npm run build
+      - run: npm run check:links
       - run: npx playwright install --with-deps chromium
       - run: npm test
         env:
@@ -29,6 +32,10 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
+          include-hidden-files: true
           name: browser-results
-          path: test-results/
+          path: |
+            test-results/
+            .cache/link-report.json
+            .cache/visual/
           if-no-files-found: ignore
