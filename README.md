@@ -4,7 +4,7 @@ Sitio estático de anime construido con **Astro 7 y TypeScript estricto**, prepa
 
 Implementa inicio, catálogo, fichas, episodios, guías/reseñas/noticias, calendario, favoritos e historial local, temas oscuro/claro, SEO, consentimiento y espacios publicitarios. Incluye **cinco series ficticias**, diez episodios sin vídeo y cuatro artículos de demostración. No se atribuyen licencias ni se incrustan capítulos inventados.
 
-Resultados de las pruebas y mediciones: [validación local](docs/validacion.md).
+Resultados de las pruebas y mediciones: [validación local](docs/validacion.md). El trabajo externo está desglosado por P1/P2/P3 en [TODO.md](TODO.md).
 
 Las capacidades técnicas de las fases 0–2 están implementadas. Sus condiciones externas —publicación, veinte/cincuenta series legales, treinta artículos definitivos, indexación y tráfico— todavía requieren trabajo editorial y cuentas del equipo. No se simulan esos resultados. La fase 3 está preparada y desactivada.
 
@@ -36,7 +36,7 @@ npm run maintenance:report
 
 Las pruebas de navegador requieren Chromium. Se usa `/usr/bin/chromium` si está disponible; fuera de este entorno ejecuta `npx playwright install chromium` o configura `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. `npm test` necesita un `dist/` recién compilado. El servidor de pruebas aplica las cabeceras CSP de Cloudflare; `astro preview` no las aplica. Las pruebas publicitarias compilan una variante aislada en `.cache/ads-build`, con identificadores ficticios y proveedores simulados; no sirven anuncios reales.
 
-`npm run perf` usa Chromium/Lighthouse en modo móvil simulado y guarda informes en `.cache/performance`. Comprueba rendimiento >90 y CLS ≤0,05 en cinco rutas representativas. No equivale a PageSpeed Insights sobre una web desplegada ni predice el coste de anuncios y vídeos reales. El sitio de muestra usa `noindex` y `robots.txt` bloqueado mientras el dominio sea `example.com`.
+`npm run perf` usa Chromium/Lighthouse en modo móvil simulado y guarda informes en `.cache/performance`. Comprueba rendimiento >90 y CLS ≤0,05 en cinco rutas representativas. No equivale a PageSpeed Insights sobre una web desplegada ni predice el coste de anuncios y vídeos reales. La opción `PUBLIC_INDEXING_ENABLED=false` mantiene `noindex` y `robots.txt` bloqueado incluso al cambiar a un dominio propio; las muestras conservan además su protección editorial.
 
 ## Estructura
 
@@ -74,6 +74,18 @@ El informe guarda `.cache/content-report.json`: distingue series reales, muestra
 Los generadores crean borradores `draft: true`, `placeholder: true`, sin vídeos, y rechazan slugs peligrosos o archivos existentes. Los borradores quedan excluidos del catálogo, rutas, metadatos y verificación de vídeos. Completa la plantilla de `templates/`, revisa con otra persona y solo entonces cambia `draft`. No cambies `placeholder` hasta tener una obra real comprobada.
 
 La persona 3 dispone de [una hoja CSV vacía de ejemplo](docs/lista-series-ejemplo.csv) y del issue **Verificación manual de un episodio**. Documenta titular, vínculo del canal con el titular, audio/subtítulos, regiones realmente revisadas, fecha, permiso de incrustación y alternativa legal. La fila PENDIENTE no representa una obra ni una licencia.
+
+## Importar una lista revisada
+
+El bloque de importación añade estas herramientas; consultar también [el PR #7](https://github.com/bg7427941-crypto/sitio-anime/pull/7) si todavía no se ha fusionado:
+
+```sh
+npm run content:import -- /ruta/lista-revisada.csv --dry-run
+npm run content:import -- /ruta/lista-revisada.csv
+# --force permite sustituir una ficha existente; revisar el diff antes de usarlo.
+```
+
+El formato de `docs/lista-series-ejemplo.csv` conserva la evidencia original y añade slug, texto de 150–300 palabras y metadatos/imágenes explícitos. La guía completa es `docs/importacion-csv.md`. Una fila representa una serie y un primer episodio opcional. El comando crea siempre `draft: true`, valida todas las filas antes de escribir y muestra errores en español. La simulación no escribe nada. No deduce ID, canal, regiones ni verificación de URLs u otros campos; solo copia `verified: true` si el CSV lo declara. Una ficha importada sigue fuera de rutas, metas y fuentes públicas hasta revisión. Los IDs pendientes pueden conservarse en borradores; el esquema sigue impidiendo publicarlos sin revisión.
 
 ## Añadir una serie
 
@@ -189,13 +201,15 @@ El tablero se prepara a partir de las 45 tareas del plan en `docs/project-tasks.
 4. Prueba una URL de Pages, las rutas, `404`, CSP, canónicas y vídeo antes de conectar el dominio propio. No hay adaptador de servidor ni Workers necesarios.
 5. Conecta el dominio y configura la redirección permanente desde el subdominio anterior mediante Cloudflare. Actualiza canónicas/Search Console si cambia el origen.
 
+El bloque de prueba Pages añade `node scripts/test-pages-build.mjs` (PR #9): compila en `.cache/pages-build` con origen ficticio, proveedores desactivados y noindex, revisa cabeceras/hashes/SEO y HTTP local 200/404, y deja `.cache/pages-validation.json`. No publica nada ni acredita acceso a una cuenta Cloudflare. Los pasos exactos del panel y evidencia remota esperada están en `docs/lanzamiento.md`.
+
 `public/_headers` declara CSP, protección de iframes del sitio, tipos MIME y política de referencia. El build genera `dist/_headers` con hashes de los scripts inline ejecutables; **publica siempre el resultado completo de `npm run build`**. Permite YouTube, AdSense y analítica, sin `unsafe-inline` para scripts; los estilos inline se permiten para el proveedor publicitario. Los assets con hash se cachean durante un año. Las fuentes Outfit y DM Sans se autoalojan con sus licencias Fontsource; no se conecta con Google Fonts.
 
 ## Calidad de enlaces, teclado y diseño
 
 `npm run check:links` recorre el HTML de `dist/`: comprueba rutas, recursos y anclas internos y los enlaces externos HTTPS. Solo un 404/410 confirmado mediante HEAD y GET se considera roto. Bloqueos 401/403, límites 429, errores 5xx, DNS, TLS y timeouts se registran como `unknown`; no hacen fallar CI ni se presentan como enlaces correctos. `--internal-only` permite una comprobación sin red. El informe queda en `.cache/link-report.json`. Se limita la concurrencia a cuatro destinos, no se envían credenciales y se bloquean destinos privados y redirecciones hacia ellos.
 
-`npm test` usa anchos exactos de **360 y 1280 px**. Axe revisa doce rutas en temas claro y oscuro; se comprueban el orden y retorno del foco en preferencias, la activación del reproductor con Enter, la ausencia de tabindex positivo y `prefers-reduced-motion`. Las cinco plantillas principales generan capturas en `.cache/visual/`. El pulido mantiene dimensiones de imágenes y reserva de anuncios: títulos equilibrados, texto de lectura de 68ch, CTA móviles fuera de la columna estrecha y foco visible en portadas.
+`npm test` usa anchos exactos de **360, 768 y 1280 px**. Axe revisa doce rutas en temas claro y oscuro; se comprueban el orden y retorno del foco en preferencias, la activación del reproductor con Enter, la ausencia de tabindex positivo y `prefers-reduced-motion`. Las cinco plantillas principales y favoritos generan 36 capturas en `.cache/visual/`: tres tamaños y ambos temas. Los archivos incluyen proyecto, vista y tema. Al quitar un favorito, el foco pasa al siguiente control o al enlace de explorar del estado vacío. El pulido mantiene dimensiones de imágenes y reserva de anuncios: acentos por portada, etiquetas de muestra legibles, detalle del héroe, jerarquía de lectura y un estado vacío de colección con espacio reservado. Las ilustraciones decorativas no requieren nuevas descargas ni animaciones.
 
 ## CI, recompilación y lanzamiento
 
@@ -209,7 +223,7 @@ Para indexar, publica primero contenido definitivo y configura el dominio. Verif
 
 ## Revisar y fusionar los bloques
 
-Los cuatro PR están encadenados: editorial → calidad → lanzamiento → mantenimiento. Revisarlos en ese orden. Después de fusionar un bloque en `main`, cambiar la base del siguiente PR a `main` antes de fusionarlo (GitHub puede hacerlo automáticamente al eliminar la rama anterior). Cada diff muestra así el bloque pendiente y los cambios terminan en la rama principal. No se han fusionado PR desde esta tarea.
+Los bloques anteriores están integrados en `main` desde `f8fe88c`. Los cuatro bloques nuevos tienen ramas y PR separados, todos con base directa `main`; no se fusionan automáticamente. Revisar y fusionar cada PR en la principal, comprobando su base y CI. Para que todos los comandos documentados estén disponibles, integrar el importador (#7) y la verificación Pages (#9) antes del PR de documentación/pulido. Dependabot #5/#6 conserva su revisión humana independiente; el [informe del bloque 1](https://github.com/bg7427941-crypto/sitio-anime/pull/8) documenta riesgos y pruebas de cada SHA. No se ha fusionado ninguno de estos PR durante esta entrega.
 
 ## Mantenimiento semanal
 
@@ -221,7 +235,7 @@ El job que instala dependencias y hace peticiones de red solo tiene lectura. La 
 
 Para revisar informes locales, ejecuta `npm run verify:videos`, `npm run check:links` y `npm run maintenance:report`. El último comando **solo genera archivos locales** y no crea issues. Usa informes de hasta 24 horas; CI exige los de su propia ejecución. Los vídeos ficticios se omiten; una respuesta oEmbed accesible no acredita licencias, regiones ni permiso de incrustación. Un 404/410 es un aviso para revisar, no una prueba de retirada mundial. Los `unknown` no se cuentan como enlaces correctos.
 
-P1 revisa infraestructura y enlaces; P3 revisa vídeos, evidencia y alternativas; P2 comprueba las fichas corregidas. El workflow semanal y Dependabot quedarán activos al fusionar sus archivos en la rama predeterminada y requieren Actions e Issues habilitados. La creación/actualización de issues se prueba con una API simulada: todavía no se ha ejecutado la tarea semanal en producción.
+P1 revisa infraestructura y enlaces; P3 revisa vídeos, evidencia y alternativas; P2 comprueba las fichas corregidas. El workflow semanal y Dependabot ya tienen sus archivos en `main` y requieren Actions e Issues habilitados; el equipo debe comprobar las ejecuciones programadas reales. La creación/actualización de issues se prueba con una API simulada: todavía no se ha ejecutado la tarea semanal en producción.
 
 ## Lo que depende del equipo
 
