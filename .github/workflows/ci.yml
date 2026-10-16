@@ -21,6 +21,7 @@ jobs:
       - run: npm run preflight
       - run: npm run test:unit
       - run: npm run build
+      - run: node scripts/test-pages-build.mjs
       - run: npm run check:links
       - run: npx playwright install --with-deps chromium
       - run: npm test

@@ -43,21 +43,74 @@ El archivo `project-tasks.json` contiene las **45 tareas** de las fases 0–3 de
 
 ## 3. Cloudflare Pages de prueba — P1, revisión de P2
 
-- [ ] Crear Pages y conectar el repositorio GitHub; autorizar solo las cuentas/proyectos necesarios.
-- [ ] Configurar rama `main`, framework Astro, Node 24, comando `npm run build`, salida `dist` y raíz del repositorio.
-- [ ] Definir las variables de `.env.example` por entorno de preview/producción. Mantener `PUBLIC_ADS_ENABLED=false`. Usar correo y nombre aprobados; ningún secreto puede llevar `PUBLIC_`.
-- [ ] Confirmar build y publicar una versión de prueba sin quitar noindex. Comprobar inicio, catálogo, ficha, episodio, artículo y 404.
-- [ ] Verificar que `_headers` generado se publica y que CSP no bloquea los scripts propios. Rechazar cookies debe impedir conexiones a anuncios/analítica.
+### 3.1. Artefacto local comprobado, antes de abrir el panel
 
 ```sh
-# Cambiar el origen por la URL de Pages del equipo; no hay URL creada por este documento.
-curl --fail --head https://PROYECTO.pages.dev/
-curl --fail --head https://PROYECTO.pages.dev/catalogo/
-curl --silent https://PROYECTO.pages.dev/robots.txt
-curl --silent https://PROYECTO.pages.dev/ | rg 'noindex|canonical'
+npm ci
+node scripts/test-pages-build.mjs
+cat .cache/pages-validation.json
 ```
 
-**Evidencia esperada:** captura de Settings/Build con esos valores y Deployments con build correcto; HTTP 200 y HTML con noindex. El catálogo de muestra seguirá sin vídeos; una verificación real necesitará fuentes del equipo. Captura de Network al rechazar consentimiento, sin solicitudes a Google Ads o Cloudflare Analytics. No incluir valores de hooks ni credenciales en capturas.
+El comando se ejecutó con **`https://sitio-anime-prueba.pages.dev` como origen ficticio**, sin consultar esa URL ni crear un proyecto. Compila a `.cache/pages-build/`, conserva `dist/` y fuerza anuncios, indexación, analítica y CMP desactivados solo en ese proceso. También se ejecuta en CI. El resultado comprobado contiene 29 páginas con noindex, canónicas/Open Graph del origen de prueba, dos hashes CSP ejecutables, dos archivos de sitemap con ocho URL públicas y robots bloqueado. Las muestras, borradores y favoritos quedan fuera del sitemap.
+
+Revisa los artefactos que sí se publicarán: `_headers` con CSP de scripts sin unsafe-inline y con hashes coincidentes; permisos de frames YouTube normal/privacidad mejorada y AdSense; caché inmutable de assets; `robots.txt` con `Disallow: /`; sitemap del origen elegido; `404.html` real. Astro usa `/404/` como canónica interna del documento de error, que conserva noindex y queda fuera del sitemap. El servidor local comprobó HTTP 200 en inicio/catálogo y 404 para una ruta inexistente, con CSP aplicada. Es una simulación local de entrega, no evidencia de infraestructura Cloudflare.
+
+### 3.2. Crear el proyecto conectado a GitHub
+
+Estos pasos se contrastaron con la [guía oficial de Astro en Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/) y con el build estático de este repositorio. No ejecutar create-cloudflare, cambiar el stack ni añadir un adaptador SSR.
+
+1. P1 revisa y fusiona los PR necesarios en `main`, con los checks aprobados y revisión del equipo. Anotar el SHA que se va a desplegar con `git rev-parse HEAD`.
+2. En Cloudflare: **Workers & Pages → Create application → Pages → Import an existing Git repository**. Autorizar el repositorio `bg7427941-crypto/sitio-anime` y pulsar **Begin setup**.
+3. Elegir el nombre aprobado del proyecto; determina `https://NOMBRE.pages.dev`. La URL ficticia anterior no reserva ese nombre.
+4. En **Set up builds and deployments** configurar estos valores:
+
+| Campo                  | Valor                                       |
+| ---------------------- | ------------------------------------------- |
+| Production branch      | `main`                                      |
+| Framework preset       | Astro                                       |
+| Root directory         | Raíz del repositorio, sin subcarpeta        |
+| Build command          | `npm run build`                             |
+| Build output directory | `dist`                                      |
+| Node                   | `NODE_VERSION=24`; `.nvmrc` también fija 24 |
+
+5. Definir las variables siguientes en producción **y previews**, antes del primer build. No copiar la URL de Deploy Hook en variables públicas.
+
+| Variable                                                       | Primera prueba                                                    |
+| -------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `PUBLIC_SITE_URL`                                              | Origen HTTPS exacto del proyecto, sin barra final ni ruta         |
+| `PUBLIC_SITE_NAME`                                             | Nombre acordado; Yoru sigue siendo provisional                    |
+| `PUBLIC_CONTACT_EMAIL`                                         | Correo real revisado por P3, o vacío y aviso visible de pendiente |
+| `PUBLIC_INDEXING_ENABLED`                                      | `false`                                                           |
+| `PUBLIC_ADS_ENABLED`                                           | `false`                                                           |
+| `PUBLIC_ADSENSE_CLIENT_ID` y cinco `PUBLIC_AD_SLOT_*`          | Vacíos                                                            |
+| `PUBLIC_CF_ANALYTICS_TOKEN`, `PUBLIC_GOOGLE_SITE_VERIFICATION` | Vacíos en esta primera prueba                                     |
+| `PUBLIC_CMP_REQUIRED`                                          | `false` para esta prueba sin anuncios                             |
+| `PUBLIC_CMP_SCRIPT_URL`                                        | Vacío                                                             |
+
+6. Pulsar **Save and Deploy**. Pages instala las dependencias y ejecuta el build; conservar el log, SHA y URL de Deployment. Para cambios posteriores en variables, iniciar otro deployment: el HTML estático no cambia sin recompilar.
+7. No habilitar la inyección automática de Web Analytics desde el panel de Pages: cuando se autorice analítica se usará el cargador del sitio, sujeto a consentimiento. No configurar Auto ads, Functions ni fallback SPA. El `404.html` generado permite un error 404 real; una redirección global a index con estado 200 lo anularía.
+
+### 3.3. Verificar el deployment real y guardar evidencia
+
+P1 sustituye el origen de ejemplo de estos comandos por la URL asignada **después de crear el proyecto**. Ninguno de estos resultados remotos se ha obtenido durante esta tarea.
+
+```sh
+SITIO_PREVIEW_ORIGIN='https://nombre-elegido.pages.dev'
+curl --fail --head "$SITIO_PREVIEW_ORIGIN/"
+curl --fail --head "$SITIO_PREVIEW_ORIGIN/catalogo/"
+curl --fail --silent "$SITIO_PREVIEW_ORIGIN/robots.txt"
+curl --fail --silent "$SITIO_PREVIEW_ORIGIN/sitemap-index.xml"
+curl --fail --silent "$SITIO_PREVIEW_ORIGIN/sitemap-0.xml"
+curl --fail --silent "$SITIO_PREVIEW_ORIGIN/" | rg 'noindex|canonical|adsEnabled'
+curl --silent --output /dev/null --write-out '%{http_code}\n' \
+  "$SITIO_PREVIEW_ORIGIN/ruta-inexistente-de-prueba/"
+```
+
+Resultados esperados: HTTP 200 para páginas existentes, `Content-Security-Policy` con hashes en la respuesta (se sirve como cabecera; `_headers` no es una página pública), canónicas y sitemap del origen elegido, `noindex,follow`, `adsEnabled:false`, `Disallow: /` y **404** para la ruta inexistente. `ads.txt` permanece como placeholder comentado. Si se recibe 200 en la ruta inventada, revisar redirecciones/fallback antes de aprobar el despliegue.
+
+P2 abre inicio, catálogo, ficha, episodio, artículo, favoritos y páginas legales a 360/768/1280 px, ambos temas. Comprobar carga de fuentes e imágenes, consola sin bloqueos CSP, navegación con teclado y ausencia de solicitudes a Google Ads, YouTube, CMP y Web Analytics. Aceptar o rechazar en esta primera prueba sin proveedores configurados tampoco debe cargarlos. Las muestras siguen sin vídeos: la reproducción real necesita las fuentes del equipo.
+
+**Capturas que debe guardar el equipo:** Settings/Build con valores y SHA, variables no secretas con anuncios/indexación en false, Deployments con build correcto y URL, cabeceras de una respuesta, salida de robots/sitemap y vista Network después de aceptar/rechazar. No incluir hooks ni credenciales. El build local aprobado no marca por sí solo esta sección como desplegada.
 
 ## 4. Dominio, TLS y redirecciones — P1, revisión de P3
 
