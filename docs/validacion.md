@@ -22,7 +22,7 @@ Build de producción, anuncios desactivados, servidor local con CSP. Puntuacione
 | Ruta                          | Rendimiento | Accesibilidad | CLS |
 | ----------------------------- | ----------: | ------------: | --: |
 | /                             |          99 |           100 |   0 |
-| /catalogo/                    |         100 |           100 |   0 |
+| /catalogo/                    |          99 |           100 |   0 |
 | /series/ecos-de-neon/         |          99 |           100 |   0 |
 | /episodios/ecos-de-neon/1/    |         100 |           100 |   0 |
 | /articulos/por-donde-empezar/ |         100 |           100 |   0 |
@@ -90,3 +90,9 @@ Se generaron **36 capturas nuevas** (seis vistas × dos temas × tres tamaños) 
 Privacidad se cotejó con `storage.ts`, `client.ts`, `services.ts` y `cmp.ts`: persistencia local y renovación del consentimiento a 180 días; YouTube tras clic separado; analítica por su categoría; CMP después de aceptar anuncios cuando se exige; AdSense además sujeto a TCF. Se aclaran datos técnicos de terceros, límites de revocación y ausencia de formulario en contacto. El aviso de estado usa la configuración del build. Derechos exige revisión de titular, idioma, incrustación y regiones sin atribuir esa función al verificador automático. El equipo debe completar identidad, correo, jurisdicción, conservación y proveedor real, y controlar cualquier inyección del alojamiento.
 
 `TODO.md` recoge el trabajo de P1/P2/P3: revisiones, cuentas, primer despliegue real, dominio/variables/contacto, permisos y contenido, maquetas, vídeos por región, CMP y monetización futura. El código y las pruebas no sustituyen esas decisiones ni habilitan anuncios o indexación.
+
+## Comprobación conjunta sin fusionar PR
+
+Se combinaron únicamente en un worktree temporal los cuatro bloques de esta entrega, sin crear un commit de integración ni cambiar main. Pasaron lint, Prettier, Astro/TypeScript, **21 pruebas unitarias + 39 de navegador + 15 de anuncios simulados = 75 pruebas**, build normal y comprobación Pages. Un CSV sintético aislado creó un borrador con vídeo pendiente: Astro lo aceptó como borrador, el informe no lo contó como serie real ni vídeo verificado y su slug no apareció en ningún HTML, JSON o sitemap público. El verificador siguió omitiendo los diez episodios de muestra sin hacer peticiones por el borrador. La ficha y el worktree temporal se retiraron después de comprobarlo; no se subió contenido sintético nuevo al catálogo.
+
+La medición final del pulido después de ajustar el enlace del reproductor obtuvo 99/99/99/100/100 en inicio/catálogo/serie/episodio/artículo, accesibilidad 100 y CLS 0. La variación de un punto entre ejecuciones locales sigue dentro de los resultados 99–100, por encima de la meta >90. No se activaron anuncios ni se retiró noindex en ningún artefacto de producción.
