@@ -4,10 +4,12 @@ Este documento prepara el trabajo externo; no declara un despliegue, aprobación
 
 Roles del plan: **P1** infraestructura/datos; **P2** frontend/diseño; **P3** contenido/SEO/monetización. Otra persona revisa cada entrega. Completar usuarios reales en `.github/CODEOWNERS`: las reglas comentadas son marcadores inactivos, no protección efectiva.
 
+La lista copiable está en [variables-cloudflare.md](variables-cloudflare.md), la revisión de CMP en [checklist-cmp.md](checklist-cmp.md) y la verificación offline de episodios en [verificacion-episodio.md](verificacion-episodio.md). Los valores vacíos y capturas pendientes no representan cuentas creadas.
+
 ## 1. Identidad y fuentes — P3, revisión de P1/P2
 
 - [ ] Decidir nombre, país/idioma del público, dominio, titular y correo de contacto.
-- [ ] Abrir un issue «Verificación manual de un episodio» por revisión y completar `docs/lista-series-ejemplo.csv`.
+- [ ] Completar una revisión offline por episodio; crear el issue en el repositorio nuevo cuando exista, y rellenar `docs/lista-series-ejemplo.csv`.
 - [ ] Comprobar titular/licenciatario, canal, episodio completo, idioma/subtítulos, regiones, fecha y permiso de incrustación. Revisar por separado los permisos de portada y metadatos.
 - [ ] Escribir textos propios y retirar `draft` únicamente después de revisión. No inventar fuentes para cubrir metas.
 - [ ] Ejecutar `npm run content:report`. Metas del plan: 20 series en fases 0/1, 50 series y 30 artículos definitivos en fase 2. Las cinco ficciones no cuentan.
@@ -16,7 +18,7 @@ Roles del plan: **P1** infraestructura/datos; **P2** frontend/diseño; **P3** co
 
 ## 2. GitHub y comprobaciones — P1/P2, revisión de P3
 
-- [ ] Fusionar los PR de cada bloque en orden, después de revisión; no trasladar directamente commits no revisados a producción.
+- [ ] Revisar y subir el estado integrado del zip al repositorio nuevo siguiendo `subida-manual.md`; comprobar el árbol completo y su primer validate. No se necesitan los PR ni ramas anteriores.
 - [ ] Rellenar/descomentar CODEOWNERS con los tres usuarios o equipos reales. Configurar `main` protegida y el check `validate` obligatorio.
 - [ ] Preparar un tablero Projects existente con estados «Por revisar», «Pendiente», «En curso», «Revisión» y «Hecho». El importador no cambia campos ajenos.
 
@@ -33,13 +35,12 @@ npm test
 npm run test:ads
 npm run perf
 npm run project:plan
-# Primero revisar el JSON de vista previa. Después, con propietario y número reales:
-npm run project:import -- --owner PROPIETARIO --project NUMERO --apply
+# La importación remota se prepara en subida-manual.md para el nuevo repositorio.
 ```
 
-El archivo `project-tasks.json` contiene las **45 tareas** de las fases 0–3 del plan, con su rol y condición de salida. El importador usa `gh project item-create`, conserva un identificador por tarea y omite duplicados. Crea borradores del tablero, no issues, responsables ni estados falsos. Requiere `gh` autenticado con permiso de Projects; no guardar tokens en el repositorio. Ejecutarlo otra vez debe crear cero tareas si el listado está completo.
+El archivo `project-tasks.json` contiene las **45 tareas** de las fases 0–3 del plan, con su rol y condición de salida. La herramienta opcional, solo para el repositorio nuevo y con gh instalado, usa `gh project item-create`, conserva un identificador por tarea y omite duplicados. Crea borradores del tablero, no issues, responsables ni estados falsos. Requiere `gh` autenticado con permiso de Projects; no guardar tokens en el repositorio. Ejecutarlo otra vez debe crear cero tareas si el listado está completo.
 
-**Evidencia esperada:** check `validate` verde, informe sin referencias internas rotas y capturas de las cinco plantillas a 360/1280 px. Los externos `unknown` requieren revisión humana; no equivalen a enlaces comprobados. Captura del tablero con títulos `F0 · P1 · …`, roles asignados y estados revisados por el equipo.
+**Evidencia esperada:** check `validate` verde, informe sin referencias internas rotas y capturas de las cinco plantillas y favoritos a 360/768/1280 px, ambos temas. Los externos `unknown` requieren revisión humana; no equivalen a enlaces comprobados. Captura del tablero con títulos `F0 · P1 · …`, roles asignados y estados revisados por el equipo.
 
 ## 3. Cloudflare Pages de prueba — P1, revisión de P2
 
@@ -51,7 +52,7 @@ node scripts/test-pages-build.mjs
 cat .cache/pages-validation.json
 ```
 
-El comando se ejecutó con **`https://sitio-anime-prueba.pages.dev` como origen ficticio**, sin consultar esa URL ni crear un proyecto. Compila a `.cache/pages-build/`, conserva `dist/` y fuerza anuncios, indexación, analítica y CMP desactivados solo en ese proceso. También se ejecuta en CI. El resultado comprobado contiene 29 páginas con noindex, canónicas/Open Graph del origen de prueba, dos hashes CSP ejecutables, dos archivos de sitemap con ocho URL públicas y robots bloqueado. Las muestras, borradores y favoritos quedan fuera del sitemap.
+El comando se ejecutó con **`https://proyecto-de-prueba.pages.dev` como origen ficticio**, sin consultar esa URL ni crear un proyecto. Compila a `.cache/pages-build/`, conserva `dist/` y fuerza anuncios, indexación, analítica y CMP desactivados solo en ese proceso. También se ejecuta en CI. El resultado comprobado contiene 29 páginas con noindex, canónicas/Open Graph del origen de prueba, dos hashes CSP ejecutables, dos archivos de sitemap con ocho URL públicas y robots bloqueado. Las muestras, borradores y favoritos quedan fuera del sitemap.
 
 Revisa los artefactos que sí se publicarán: `_headers` con CSP de scripts sin unsafe-inline y con hashes coincidentes; permisos de frames YouTube normal/privacidad mejorada y AdSense; caché inmutable de assets; `robots.txt` con `Disallow: /`; sitemap del origen elegido; `404.html` real. Astro usa `/404/` como canónica interna del documento de error, que conserva noindex y queda fuera del sitemap. El servidor local comprobó HTTP 200 en inicio/catálogo y 404 para una ruta inexistente, con CSP aplicada. Es una simulación local de entrega, no evidencia de infraestructura Cloudflare.
 
@@ -59,8 +60,8 @@ Revisa los artefactos que sí se publicarán: `_headers` con CSP de scripts sin 
 
 Estos pasos se contrastaron con la [guía oficial de Astro en Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/) y con el build estático de este repositorio. No ejecutar create-cloudflare, cambiar el stack ni añadir un adaptador SSR.
 
-1. P1 revisa y fusiona los PR necesarios en `main`, con los checks aprobados y revisión del equipo. Anotar el SHA que se va a desplegar con `git rev-parse HEAD`.
-2. En Cloudflare: **Workers & Pages → Create application → Pages → Import an existing Git repository**. Autorizar el repositorio `bg7427941-crypto/sitio-anime` y pulsar **Begin setup**.
+1. P1 revisa el estado integrado y lo sube completo al repositorio nuevo. Anotar la fecha de entrega y, después de la subida, el identificador del primer commit nuevo si se quiere trazabilidad; no se requiere el historial anterior.
+2. En Cloudflare: **Workers & Pages → Create application → Pages → Import an existing Git repository**. Autorizar el repositorio `REEMPLAZAR_PROPIETARIO/REEMPLAZAR_REPOSITORIO` y pulsar **Begin setup**.
 3. Elegir el nombre aprobado del proyecto; determina `https://NOMBRE.pages.dev`. La URL ficticia anterior no reserva ese nombre.
 4. En **Set up builds and deployments** configurar estos valores:
 
@@ -156,7 +157,7 @@ npm run preflight -- --cmp-required --json
 ## 7. Operación y evidencias — P1, revisión de P2/P3
 
 - [ ] Configurar `CLOUDFLARE_DEPLOY_HOOK` como secreto de GitHub para publicar la recompilación diaria; sin hook se valida el build sin desplegar.
-- [ ] Comprobar Actions, el workflow `weekly.yml`, Dependabot e Issues habilitados. El informe semanal crea o actualiza un issue por semana después de fusionar el bloque 4. Revisar vídeos/enlaces semanalmente, especialmente 404/410; los bloqueos regionales y de red requieren comprobación humana.
+- [ ] Comprobar Actions, el workflow `weekly.yml`, Dependabot e Issues habilitados. El informe semanal crea o actualiza un issue por semana cuando sus archivos estén en la rama predeterminada nueva. Revisar vídeos/enlaces semanalmente, especialmente 404/410; los bloqueos regionales y de red requieren comprobación humana.
 - [ ] P3 atiende avisos de derechos, revisa fuentes y amplía el catálogo; P2 comprueba móvil/accesibilidad; P1 mantiene dependencias, build y despliegue.
 - [ ] Conservar evidencia de cada condición de salida: publicación + 20 series legales; experiencia móvil con episodios oficiales; 50 series + 30 artículos + indexación/tráfico; aprobación e ingresos reales en fase 3.
 

@@ -1,0 +1,62 @@
+[
+  {
+    "name": "fase:0",
+    "color": "6f42c1",
+    "description": "Base del proyecto"
+  },
+  {
+    "name": "fase:1",
+    "color": "1d76db",
+    "description": "Producto mínimo"
+  },
+  {
+    "name": "fase:2",
+    "color": "0e8a16",
+    "description": "Lanzamiento y tráfico"
+  },
+  {
+    "name": "fase:3",
+    "color": "d4c5f9",
+    "description": "Monetización futura"
+  },
+  {
+    "name": "rol:P1",
+    "color": "0052cc",
+    "description": "Infraestructura y datos"
+  },
+  {
+    "name": "rol:P2",
+    "color": "bf3989",
+    "description": "Frontend y diseño"
+  },
+  {
+    "name": "rol:P3",
+    "color": "e99695",
+    "description": "Contenido, SEO y monetización"
+  },
+  {
+    "name": "contenido",
+    "color": "c5def5",
+    "description": "Revisión editorial"
+  },
+  {
+    "name": "mantenimiento",
+    "color": "fef2c0",
+    "description": "Vídeos, enlaces y operación"
+  },
+  {
+    "name": "dependencias",
+    "color": "0366d6",
+    "description": "Actualizaciones de dependencias"
+  },
+  {
+    "name": "accesibilidad",
+    "color": "bfdadc",
+    "description": "Teclado, contraste y accesibilidad"
+  },
+  {
+    "name": "lanzamiento",
+    "color": "fbca04",
+    "description": "Cuentas y despliegue"
+  }
+]

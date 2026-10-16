@@ -1,20 +1,20 @@
-# Revisión de Dependabot: PR 5 y 6
+# Revisión de las dependencias integradas
 
-Revisión del 15 de octubre de 2026 (Chicago). Base comprobada: `main` en `f8fe88c`, árbol limpio y bloques anteriores integrados. **No se fusiona ningún PR**. Los resultados corresponden a los SHA indicados; una actualización posterior requiere revisar el diff y su CI otra vez.
+Revisión técnica original del 15 de octubre de 2026; actualizaciones aplicadas y revalidadas localmente en main el **16 de octubre de 2026**. El zip incluye este informe y las versiones revisadas, sin requerir PR, historial o acceso al repositorio anterior. No se recomendó esperar por una incompatibilidad conocida. Las notas oficiales se conservan como fuentes externas.
 
-## PR 5: htmlparser2 10.1.0 → 12.0.0
+## Parser: htmlparser2 10.1.0 → 12.0.0
 
-[PR 5](https://github.com/bg7427941-crypto/sitio-anime/pull/5), SHA `dc261f4`. Riesgo **medio**, por dos versiones mayores en la herramienta de comprobación de enlaces.
+Riesgo **medio**, por dos versiones mayores en la herramienta de comprobación de enlaces.
 
 - [v11](https://github.com/fb55/htmlparser2/releases/tag/v11.0.0): solo ESM, Node mínimo 20.19, retirada de `parseDOM` y nuevas versiones mayores de domhandler/domutils/entities. El sitio usa Node 24 e `import { Parser }`, sin `require`, `parseDOM` ni acceso a esas estructuras internas.
 - [v12](https://github.com/fb55/htmlparser2/releases/tag/v12.0.0): ajusta el análisis HTML a WHATWG. Cambia raw-text/RCDATA, textarea, comentarios, SVG/MathML y cierres implícitos. Estos cambios pueden variar qué enlaces descubre una herramienta; las pruebas y las 682 referencias del build actual pasan. No se afirma compatibilidad con cualquier HTML futuro.
 - La actualización directa es de desarrollo: no modifica el código del navegador ni autoriza contenido, vídeo o derechos. El saneamiento de Markdown conserva sus propias dependencias del lockfile.
 
-**Recomendación:** apto para que otra persona apruebe y fusione, si el SHA y los checks siguen vigentes. No hizo falta corregir la rama.
+**Estado:** aplicado. No hizo falta adaptar el uso de Parser; se regeneró el lockfile y la batería completa pasa con la actualización.
 
-## PR 6: grupo de GitHub Actions
+## Automatización: grupo de GitHub Actions
 
-[PR 6](https://github.com/bg7427941-crypto/sitio-anime/pull/6), SHA `e632bbb`. Riesgo **medio**, por seis acciones con cambios mayores y efectos en CI, caché y el informe semanal.
+Riesgo **medio**, por seis acciones con cambios mayores y efectos en CI, caché y el informe semanal.
 
 | Actualización y fuentes oficiales                                                                                                                                                                                                       | Incompatibilidad o riesgo revisado                                                                                                                                                            | Aplicación al repositorio                                                                                                                                                        |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -25,11 +25,11 @@ Revisión del 15 de octubre de 2026 (Chicago). Base comprobada: `main` en `f8fe8
 | [download-artifact 4→8](https://github.com/actions/download-artifact/releases/tag/v8.0.0), [5](https://github.com/actions/download-artifact/releases/tag/v5.0.0), [7](https://github.com/actions/download-artifact/releases/tag/v7.0.0) | Cambio de rutas para un único artifact-id; Node 24, ESM y fallo ante digest incorrecto.                                                                                                       | Se descarga por nombre a reports/, por lo que no aplica el cambio por ID. Se conserva la comprobación estricta de integridad.                                                    |
 | [github-script 7→9](https://github.com/actions/github-script/releases/tag/v9.0.0), [8](https://github.com/actions/github-script/releases/tag/v8.0.0)                                                                                    | Node 24; require('@actions/github') deja de funcionar; getOctokit es ahora un parámetro inyectado.                                                                                            | El script usa require de node:fs/promises, import dinámico local y el cliente github inyectado. No importa @actions/github ni declara getOctokit.                                |
 
-**Recomendación:** apto para revisión y fusión humana, con los checks vigentes. El CI remoto del propio PR ya ejecutó checkout/setup-node/upload actualizados correctamente. No hizo falta modificar la rama. Los caminos exclusivos de ejecución diaria/semanal (caché, descarga y publicación real) requieren observar su primera ejecución después de fusionar; no se lanzó el workflow semanal ni se abrió un issue de mantenimiento como prueba. Las pruebas locales del publicador usan una API simulada y no sustituyen esa evidencia operativa.
+**Estado:** aplicado a los tres workflows, conservando sus pasos locales y el comprobador Pages. La validación local confirma instalación, formatos, código, build y pruebas; no ejecuta las Actions alojadas. Caché, descarga/publicación y permisos del repositorio nuevo deben observarse en su primera ejecución real. No se lanzó el workflow semanal ni se creó un issue remoto para simular evidencia operativa.
 
 ## Comandos y resultados por actualización
 
-Cada PR se probó por separado en un worktree con `npm ci` y su propio lockfile:
+En la revisión inicial, cada actualización se probó por separado con npm ci y su lockfile; en esta entrega se revalidó después de integrarla en main:
 
 ```sh
 npm run lint
@@ -41,14 +41,16 @@ npm run check:links -- --internal-only
 npm run perf
 ```
 
-Los seis comandos solicitados pasan en **ambos** PR: Astro/TypeScript sin diagnósticos, 15 pruebas unitarias/de integración, 26 de navegador (360/1280 px y temas claro/oscuro), build de 29 páginas y 682 referencias internas correctas. La comprobación adicional de enlaces no consulta destinos externos; sus cuatro destinos se registran como omitidos, no como verificados. Los ensayos Lighthouse se ejecutaron por separado para evitar competencia de CPU.
+Los seis comandos solicitados pasan en **ambas** revisiones iniciales: Astro/TypeScript sin diagnósticos, 15 pruebas unitarias/de integración, 26 de navegador (360/1280 px y temas claro/oscuro), build de 29 páginas y 682 referencias internas correctas. La comprobación adicional de enlaces no consulta destinos externos; sus cuatro destinos se registran como omitidos, no como verificados. Los ensayos Lighthouse se ejecutaron por separado para evitar competencia de CPU.
 
-| Ruta                          | Rendimiento PR 5 | Rendimiento PR 6 | Accesibilidad ambos | CLS ambos |
-| ----------------------------- | ---------------: | ---------------: | ------------------: | --------: |
-| /                             |               99 |               99 |                 100 |         0 |
-| /catalogo/                    |              100 |              100 |                 100 |         0 |
-| /series/ecos-de-neon/         |              100 |               99 |                 100 |         0 |
-| /episodios/ecos-de-neon/1/    |              100 |              100 |                 100 |         0 |
-| /articulos/por-donde-empezar/ |              100 |              100 |                 100 |         0 |
+| Ruta                          | Rendimiento parser | Rendimiento Actions | Accesibilidad ambos | CLS ambos |
+| ----------------------------- | -----------------: | ------------------: | ------------------: | --------: |
+| /                             |                 99 |                  99 |                 100 |         0 |
+| /catalogo/                    |                100 |                 100 |                 100 |         0 |
+| /series/ecos-de-neon/         |                100 |                  99 |                 100 |         0 |
+| /episodios/ecos-de-neon/1/    |                100 |                 100 |                 100 |         0 |
+| /articulos/por-donde-empezar/ |                100 |                 100 |                 100 |         0 |
 
 Son mediciones móviles locales con muestras ficticias, sin anuncios ni proveedores de vídeo activos; no equivalen a PageSpeed Insights desplegado. No se añadieron obras, canales, licencias o regiones a producción. Anuncios e indexación conservan su configuración desactivada.
+
+Las cantidades de la tabla son evidencia de la revisión inicial. El resultado actualizado de integración y exportación figura en `validacion.md`. El saneamiento HTML conserva su dependencia propia; la actualización directa del parser es una herramienta de desarrollo, sin cambios de stack ni proveedores activos.

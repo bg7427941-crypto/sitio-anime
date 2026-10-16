@@ -9,7 +9,7 @@ import { Parser } from 'htmlparser2';
 import matter from 'gray-matter';
 import { readSeries } from './content.mjs';
 
-export const previewOrigin = 'https://sitio-anime-prueba.pages.dev';
+export const previewOrigin = 'https://proyecto-de-prueba.pages.dev';
 const output = '.cache/pages-build';
 async function walk(directory) {
   const files = [];

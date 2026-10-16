@@ -1,4 +1,4 @@
-# Yoru · sitio-anime
+# Catálogo de anime · plantilla portable
 
 Sitio estático de anime construido con **Astro 7 y TypeScript estricto**, preparado para Cloudflare Pages. `plan-sitio-anime.md` es la fuente de verdad editorial y de producto. **Yoru es un nombre provisional.**
 
@@ -10,10 +10,11 @@ Las capacidades técnicas de las fases 0–2 están implementadas. Sus condicion
 
 ## Desarrollo
 
-Requisitos: Node.js 24 (ver `.nvmrc`) y npm. En este entorno trabaja en `/workspace/sitio-anime`; cada tarea ya está aislada, sin necesidad de un worktree.
+Requisitos: Node.js 24 (ver `.nvmrc`) y npm. Ejecuta los comandos desde la raíz del proyecto descomprimido. No se necesita Git, gh ni un historial remoto para instalar, compilar o probar. `.npmrc` usa una caché relativa dentro de `.cache/npm`.
 
 ```sh
 npm ci
+# Opcional para personalizar localmente (la muestra compila sin .env):
 cp .env.example .env
 npm run dev
 ```
@@ -73,11 +74,11 @@ El informe guarda `.cache/content-report.json`: distingue series reales, muestra
 
 Los generadores crean borradores `draft: true`, `placeholder: true`, sin vídeos, y rechazan slugs peligrosos o archivos existentes. Los borradores quedan excluidos del catálogo, rutas, metadatos y verificación de vídeos. Completa la plantilla de `templates/`, revisa con otra persona y solo entonces cambia `draft`. No cambies `placeholder` hasta tener una obra real comprobada.
 
-La persona 3 dispone de [una hoja CSV vacía de ejemplo](docs/lista-series-ejemplo.csv) y del issue **Verificación manual de un episodio**. Documenta titular, vínculo del canal con el titular, audio/subtítulos, regiones realmente revisadas, fecha, permiso de incrustación y alternativa legal. La fila PENDIENTE no representa una obra ni una licencia.
+La persona 3 dispone de [una hoja CSV vacía de ejemplo](docs/lista-series-ejemplo.csv) y del issue **Verificación manual de un episodio**. Documenta titular, vínculo del canal con el titular, audio/subtítulos, regiones realmente revisadas, fecha, permiso de incrustación y alternativa legal. La fila vacía es una plantilla, sin una obra ni licencia declarada.
 
 ## Importar una lista revisada
 
-El bloque de importación añade estas herramientas; consultar también [el PR #7](https://github.com/bg7427941-crypto/sitio-anime/pull/7) si todavía no se ha fusionado:
+El importador y todos sus campos están incluidos en esta entrega:
 
 ```sh
 npm run content:import -- /ruta/lista-revisada.csv --dry-run
@@ -186,12 +187,11 @@ npm run preflight
 npm run preflight -- --strict
 npm run preflight -- --cmp-required --json
 npm run project:plan
-npm run project:import -- --owner PROPIETARIO --project NUMERO --apply
 ```
 
 `preflight` lee las variables inyectadas y `.env`, no imprime sus valores ni los modifica. Por defecto avisa sin bloquear; `--strict` termina con 1 ante requisitos incompletos. Comprueba dominio, nombre, correo, cliente/slots y ads.txt coherentes, y CMP si se declara aplicable. Una configuración completa no demuestra licencias, aprobación de AdSense ni certificación de CMP.
 
-El tablero se prepara a partir de las 45 tareas del plan en `docs/project-tasks.json`. Sin `--apply`, el importador solo imprime la propuesta. Con `--apply` y permiso de Projects crea borradores en un tablero existente y evita duplicados por identificador. CODEOWNERS contiene los tres roles como reglas comentadas: rellenar usuarios/equipos reales y descomentarlas antes de exigir revisiones automáticas.
+El tablero se prepara localmente a partir de las 45 tareas del plan en `docs/project-tasks.json`. Su importación remota es opcional y se explica para el repositorio nuevo en `docs/subida-manual.md`. Sin `--apply`, el importador solo imprime la propuesta. Con `--apply` y permiso de Projects crea borradores en un tablero existente y evita duplicados por identificador. CODEOWNERS contiene los tres roles como reglas comentadas: rellenar usuarios/equipos reales y descomentarlas antes de exigir revisiones automáticas.
 
 ## Cloudflare Pages
 
@@ -201,7 +201,7 @@ El tablero se prepara a partir de las 45 tareas del plan en `docs/project-tasks.
 4. Prueba una URL de Pages, las rutas, `404`, CSP, canónicas y vídeo antes de conectar el dominio propio. No hay adaptador de servidor ni Workers necesarios.
 5. Conecta el dominio y configura la redirección permanente desde el subdominio anterior mediante Cloudflare. Actualiza canónicas/Search Console si cambia el origen.
 
-El bloque de prueba Pages añade `node scripts/test-pages-build.mjs` (PR #9): compila en `.cache/pages-build` con origen ficticio, proveedores desactivados y noindex, revisa cabeceras/hashes/SEO y HTTP local 200/404, y deja `.cache/pages-validation.json`. No publica nada ni acredita acceso a una cuenta Cloudflare. Los pasos exactos del panel y evidencia remota esperada están en `docs/lanzamiento.md`.
+La comprobación `node scripts/test-pages-build.mjs`: compila en `.cache/pages-build` con origen ficticio, proveedores desactivados y noindex, revisa cabeceras/hashes/SEO y HTTP local 200/404, y deja `.cache/pages-validation.json`. No publica nada ni acredita acceso a una cuenta Cloudflare. Los pasos exactos del panel y evidencia remota esperada están en `docs/lanzamiento.md`.
 
 `public/_headers` declara CSP, protección de iframes del sitio, tipos MIME y política de referencia. El build genera `dist/_headers` con hashes de los scripts inline ejecutables; **publica siempre el resultado completo de `npm run build`**. Permite YouTube, AdSense y analítica, sin `unsafe-inline` para scripts; los estilos inline se permiten para el proveedor publicitario. Los assets con hash se cachean durante un año. Las fuentes Outfit y DM Sans se autoalojan con sus licencias Fontsource; no se conecta con Google Fonts.
 
@@ -221,9 +221,17 @@ Configura protección de `main` con revisión de otra persona y el check `valida
 
 Para indexar, publica primero contenido definitivo y configura el dominio. Verifica la propiedad en Google Search Console con DNS o `PUBLIC_GOOGLE_SITE_VERIFICATION`, y envía `/sitemap-index.xml`. Activar Cloudflare Web Analytics requiere un token público de beacon. Vuelve a medir con PageSpeed Insights en el dominio real y después de activar cada proveedor.
 
-## Revisar y fusionar los bloques
+## Entregar o trasladar el proyecto
 
-Los bloques anteriores están integrados en `main` desde `f8fe88c`. Los cuatro bloques nuevos tienen ramas y PR separados, todos con base directa `main`; no se fusionan automáticamente. Revisar y fusionar cada PR en la principal, comprobando su base y CI. Para que todos los comandos documentados estén disponibles, integrar el importador (#7) y la verificación Pages (#9) antes del PR de documentación/pulido. Dependabot #5/#6 conserva su revisión humana independiente; el [informe del bloque 1](https://github.com/bg7427941-crypto/sitio-anime/pull/8) documenta riesgos y pruebas de cada SHA. No se ha fusionado ninguno de estos PR durante esta entrega.
+Esta fuente reúne en main el importador, Pages, pulido/legales, informe de dependencias y actualizaciones revisadas. No depende de los PR, ramas o remoto de origen. Sigue [la guía de subida manual](docs/subida-manual.md) para el inventario exacto, archivos ocultos, lotes de hasta 100 archivos, borrados y ajustes del repositorio nuevo.
+
+```sh
+node scripts/source-files.mjs
+node scripts/source-files.mjs --copy .cache/fuente-limpia
+node scripts/source-files.mjs --batches .cache/lotes-web
+```
+
+El exportador no usa Git ni gh y excluye dependencias, builds, cachés y entorno privado; comprueba ocultos y credenciales reconocibles antes de copiar. Una prueba limpia con npm ci, lint, check, build y unitarias está documentada en `docs/validacion.md`. Consulta [variables copiables de Cloudflare](docs/variables-cloudflare.md), [checklist de CMP](docs/checklist-cmp.md), [revisión offline de episodios](docs/verificacion-episodio.md) y [TODO por rol](TODO.md). Las acciones que requieren cuentas o configuración remota se realizan en el nuevo repositorio.
 
 ## Mantenimiento semanal
 

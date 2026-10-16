@@ -1,6 +1,6 @@
 # Importar la lista editorial como borradores
 
-P3 completa una copia de `docs/lista-series-ejemplo.csv`; P1/P2 revisan el diff. La fila PENDIENTE es una guía vacía y no se puede importar sin completar datos. El importador no consulta YouTube ni identifica obras, licencias o regiones. Una fila representa una serie y, opcionalmente, un primer episodio. Los demás episodios se añaden al Markdown revisado.
+P3 completa una copia de `docs/lista-series-ejemplo.csv`; P1/P2 revisan el diff. La fila vacía es una guía sin datos declarados y no se puede importar sin completar datos. El importador no consulta YouTube ni identifica obras, licencias o regiones. Una fila representa una serie y, opcionalmente, un primer episodio. Los demás episodios se añaden al Markdown revisado.
 
 ```sh
 npm run content:import -- /ruta/lista-revisada.csv --dry-run

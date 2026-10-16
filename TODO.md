@@ -1,43 +1,57 @@
-# Pendientes del equipo
+# Estado y pendientes del equipo
 
-El código conserva anuncios apagados y noindex. Los checks con muestras no cumplen las condiciones editoriales ni externas del plan. Cada entrega requiere revisión de otra persona. Roles sin nombres asignados: completar usuarios y equipos reales, sin inventarlos.
+Actualizado el **16 de octubre de 2026**. P1 = infraestructura/datos; P2 = frontend/diseño; P3 = contenido/SEO/monetización. Son roles, no usuarios asignados. El estado entregado mantiene anuncios apagados, noindex y robots bloqueado. No se publican fuentes reales ni se simulan licencias o cuentas.
 
-## P1 — Infraestructura y datos
+## Trabajo que se puede completar desde código
 
-- [ ] Revisar los PR de esta entrega y los de Dependabot #5/#6; comprobar SHA y CI antes de fusionar. Todos los bloques nuevos apuntan a `main`; no fusionar en una rama intermedia.
-- [ ] Proteger `main`, exigir `validate` y revisión de otra persona. Invitar a P2/P3 y rellenar/descomentar CODEOWNERS; sus marcadores actuales no asignan revisores.
-- [ ] Crear el proyecto **Cloudflare Pages** conectado a GitHub con Node 24, `npm run build`, salida `dist` y producción desde `main`. Ejecutar el procedimiento y guardar las capturas de `docs/lanzamiento.md`.
-- [ ] Elegir con P3 nombre y dominio, configurar variables de producción/preview y verificar TLS, canónicas, sitemap, CSP y 404 reales. Mantener `PUBLIC_INDEXING_ENABLED=false` y `PUBLIC_ADS_ENABLED=false`.
-- [ ] Desactivar la inyección automática de Web Analytics en Pages; una futura analítica se cargará desde el sitio tras consentimiento. No activar servicios durante el primer despliegue de prueba.
-- [ ] Confirmar conexión y condiciones vigentes de Jikan/MyAnimeList y permisos de portadas con obras aportadas por P3. Aplicar los ajustes de red guardados del entorno si siguen pendientes; un 403 de red no es evidencia de datos correctos.
-- [ ] Crear o elegir un tablero GitHub Projects y ejecutar primero `npm run project:plan`; revisar las 45 tareas antes de importar con propietario/número reales.
-- [ ] Configurar el secreto `CLOUDFLARE_DEPLOY_HOOK` si se quiere publicar la recompilación diaria. No ponerlo en `PUBLIC_`, archivos o capturas.
-- [ ] Observar las primeras ejecuciones diaria y semanal reales: restauración de caché, artefactos ocultos, descarga con integridad y creación/actualización de un único issue. Las pruebas del publicador son simuladas.
-- [ ] Registrar el sitio en Search Console con P3 y medir PageSpeed Insights sobre el despliegue. La verificación de propiedad y los resultados locales no prueban indexación ni tráfico.
+- [x] **P1 — 2026-10-16:** integrar localmente importador CSV, build Pages, pulido/legales e informe de dependencias en main. README y guías ya no dependen de PR ni del historial remoto.
+- [x] **P1 — 2026-10-16:** aplicar las actualizaciones revisadas de parser y Actions, regenerar el lockfile y validar cada etapa con los ocho comandos solicitados.
+- [x] **P1/P2 — 2026-10-16:** ejecutar la suite final y revisar noindex, anuncios apagados, robots, CSP/hashes, canónicas, sitemap y 404 del artefacto local.
+- [x] **P1 — 2026-10-16:** preparar exportación sin Git ni datos generados, auditar rutas/credenciales detectables, verificar ocultos y contar archivos/lotes para subida manual.
+- [x] **P1 — 2026-10-16:** validar instalación, lint, check, build y unitarias desde una copia limpia sin .git ni .env; comprobar el zip contra el inventario.
+- [x] **P2 — 2026-10-16:** revisar las cinco plantillas y favoritos en 360/768/1280 px, ambos temas, axe, foco, movimiento reducido, rendimiento >90 y CLS.
+- [x] **P2/P3 — 2026-10-16:** cotejar privacidad, derechos y contacto con el almacenamiento y los cargadores reales del código; el titular y los proveedores reales siguen pendientes.
 
-## P2 — Frontend y diseño
+## Preparado sin dar por completado el trabajo externo
 
-- [ ] Revisar las capturas de inicio, catálogo, serie, episodio, artículo y favoritos en 360/768/1280 px y ambos temas. Validar con el equipo nombre, identidad y maquetas compartidas.
-- [ ] Comprobar en el dominio real teclado, foco, cookies, lector de pantalla y almacenamiento deshabilitado; probar dispositivos reales además de Chromium emulado.
-- [ ] Probar un episodio y una alternativa legal aportados por P3 desde los países/idiomas revisados. El iframe simulado no demuestra incrustación ni disponibilidad de una fuente real.
-- [ ] Revisar portadas y hero reales sin perder dimensiones reservadas, legibilidad, movimiento reducido, rendimiento móvil >90 y CLS bajo. Repetir la medición después de integrar proveedores reales.
-- [ ] Cuando P3 determine si aplica, seleccionar y configurar una CMP certificada con sus mensajes y señal TCF; adaptar la CSP a sus dominios y verificar rechazo, aceptación y retirada en la cuenta del equipo.
-- [ ] Revisar con P3 las páginas legales cada vez que cambien proveedores, almacenamiento o métricas. El banner propio no acredita una CMP certificada.
+- [x] **P1 — preparado 2026-10-16:** lista copiable de variables en `docs/variables-cloudflare.md`, con anuncios/indexación en false, campos de cuentas vacíos y origen reservado pendiente.
+- [x] **P1 — preparado 2026-10-16:** guía de subida con ocultos, lotes de 100, límites de tamaño, opción Git, borrados y ajustes del nuevo repositorio en `docs/subida-manual.md`.
+- [x] **P1/P3 — preparado 2026-10-16:** 45 tareas de fases 0–3 en `docs/project-tasks.json`; `npm run project:plan` funciona localmente. La importación al tablero requiere el nuevo propietario/proyecto y, opcionalmente, gh autorizado allí.
+- [x] **P1 — preparado 2026-10-16:** CODEOWNERS comentado con marcadores de los tres roles, plantillas de issues y `.github/labels.json` para crear etiquetas en el destino. No se han asignado cuentas ni creado issues/etiquetas remotos.
+- [x] **P3 — preparado 2026-10-16:** CSV con encabezados y una fila vacía en `docs/lista-series-ejemplo.csv`; guía del importador y plantilla offline en `docs/verificacion-episodio.md`.
+- [x] **P2/P3 — preparado 2026-10-16:** `docs/checklist-cmp.md` con campos de proveedor/evidencia vacíos y pruebas de aceptación/rechazo/retirada. No implica certificación ni contrato.
+- [x] **P1/P2 — preparado 2026-10-16:** procedimiento de primer Pages en `docs/lanzamiento.md`, con build ficticio verificado, comandos y capturas esperadas. La cuenta y publicación reales no están completadas.
 
-## P3 — Contenido, SEO y monetización
+## Decisiones y acciones que requieren personas
 
-- [ ] Decidir país, idioma, nombre definitivo, dominio, titular y correo real de contacto/reclamaciones con el equipo. Completar privacidad, jurisdicción, conservación y ejercicio de derechos.
-- [ ] Aportar la lista de series en el CSV documentado: título y metadatos comprobados, textos originales de 150–300 palabras, portadas/hero y evidencia de permiso. Usar primero `content:import --dry-run` y revisar cada borrador.
-- [ ] Completar un issue manual por episodio: titular/licenciatario, canal y vínculo con el titular, vídeo completo, audio/subtítulos, regiones comprobadas, permiso de incrustación, fecha, revisor y alternativa legal específica.
-- [ ] Revisar cada `verified` declarado en el CSV. El importador no consulta fuentes ni transforma una declaración humana en licencia; publicar el borrador necesita otra revisión.
-- [ ] Cumplir metas con contenido real: 20 series para fases 0/1; después 50 series y 30 artículos definitivos para fase 2. Las cinco ficciones y cuatro artículos de muestra no cuentan.
-- [ ] Asignar quién atiende avisos de derechos y retiradas/correcciones en 24 horas; revisar semanalmente vídeos, enlaces desconocidos y alternativas por región.
-- [ ] Preparar publicaciones editoriales y cuentas sociales del plan; revisar búsquedas y tráfico orgánico real con P1. Solicitar indexación mediante una tarea posterior autorizada, tras revisar contenido y acceso público.
-- [ ] Para una futura monetización: confirmar requisitos vigentes, solicitar y obtener aprobación de AdSense, cliente/slots y línea exacta de ads.txt; decidir CMP según el público con P2 y actualizar privacidad.
-- [ ] Acordar por escrito titular de cobros, reparto de ingresos y hoja mensual de visitas/ingresos. Mantener Auto ads, anclas y viñetas desactivados para respetar los espacios manuales.
+### P1 — Infraestructura y datos
 
-## Decisiones de los tres
+- [ ] Elegir con el equipo propietario/repositorio nuevo, visibilidad y colaboradores reales; subir la fuente completa, habilitar Actions y comprobar el primer validate.
+- [ ] Proteger main, exigir validate y revisión; completar/descomentar CODEOWNERS con cuentas del destino. Crear las etiquetas y el tablero; importar o copiar las tareas solo en el repositorio nuevo.
+- [ ] Crear/conectar Cloudflare Pages y configurar las variables reales. Guardar evidencia del build y URL pública; probar TLS, CSP, canónicas, sitemap, 404, teclado y consentimiento en el dominio real.
+- [ ] Decidir/comprar dominio con P3 y configurar DNS y redirecciones que preserven ruta/consulta. Mantener PUBLIC_INDEXING_ENABLED=false y PUBLIC_ADS_ENABLED=false.
+- [ ] Obtener el hook real y guardarlo como secreto del repo nuevo si se quiere publicar a diario. Observar la primera ejecución diaria/semanal, sus artefactos y el issue de mantenimiento.
+- [ ] Confirmar condiciones y conectividad de Jikan/MyAnimeList con datos revisados por P3; comprobar permisos de imágenes. Las muestras compilan sin API, pero no acreditan una conexión real.
+- [ ] Crear la propiedad Search Console con P3 y medir PageSpeed Insights sobre el deployment. Mantener la inyección automática de Web Analytics del panel apagada; preparar analítica del sitio únicamente si se autoriza.
 
-- [ ] Asignar personas reales a P1/P2/P3, dedicación semanal y revisiones cruzadas.
-- [ ] Aprobar evidencia de cada condición de salida del plan antes de declararla completada.
-- [ ] La activación de anuncios y la retirada de noindex serán tareas explícitas posteriores. Este TODO no las autoriza ni las ejecuta.
+### P2 — Frontend y diseño
+
+- [ ] Revisar con el equipo identidad, maquetas y nombre definitivos. Asignar personas reales a las revisiones de diseño y accesibilidad.
+- [ ] Validar navegador, lector de pantalla, almacenamiento bloqueado y dispositivos reales sobre el despliegue, además de las pruebas Chromium simuladas.
+- [ ] Probar vídeos, alternativas y portadas reales aportados por P3 desde los países e idiomas revisados; repetir rendimiento/CLS cuando haya proveedores reales.
+- [ ] Configurar con P3 la CMP real cuando corresponda: proveedor certificado, mensajes, idiomas, TCF, dominios CSP y pruebas completas. El código no selecciona ni certifica una CMP.
+
+### P3 — Contenido, SEO y monetización
+
+- [ ] Decidir nombre del sitio, país/idioma del público, dominio, titular y correo real de contacto/reclamaciones. Completar identidad, jurisdicción, conservación y derechos de privacidad.
+- [ ] Aportar series reales, textos propios de 150–300 palabras, metadatos, portadas/hero y prueba de permiso. Revisar el dry-run del CSV; no publicar automáticamente sus borradores.
+- [ ] Verificar por episodio titular, canal y prueba de relación, vídeo completo, audio/subtítulos, permiso de incrustación, regiones realmente revisadas, fecha y alternativa legal específica. Solicitar segunda revisión antes de verified=true.
+- [ ] Alcanzar metas del plan con evidencia real: 20 series en fases 0/1 y luego 50 series y 30 artículos definitivos. Las cinco ficciones y cuatro artículos de muestra no cuentan.
+- [ ] Asignar quién atiende reclamaciones y correcciones en 24 horas; revisar semanalmente enlaces/vídeos, redes sociales y tráfico real con el equipo.
+- [ ] Solicitar y obtener aprobación AdSense, cliente/slots y entrada exacta de ads.txt cuando corresponda. Decidir aplicabilidad y cuenta de CMP con P2; actualizar privacidad con proveedores reales.
+- [ ] Acordar titular de cobros, reparto de ingresos y registro mensual de visitas/ingresos. Conservar Auto ads, anclas y viñetas apagados para respetar los slots manuales.
+
+### P1/P2/P3 — Decisión posterior conjunta
+
+- [ ] Asignar nombres reales a los tres roles y la dedicación semanal; registrar revisiones y condiciones de salida con evidencia.
+- [ ] Autorizar explícitamente una futura activación de anuncios o retirada de noindex cuando haya contenido, permisos y configuración completos. Esta entrega no ejecuta esas acciones.
