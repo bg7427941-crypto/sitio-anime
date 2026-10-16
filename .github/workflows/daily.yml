@@ -9,13 +9,13 @@ jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: .cache/
           key: metadata-${{ github.run_id }}
@@ -35,7 +35,7 @@ jobs:
           else
             echo 'Build validated; add CLOUDFLARE_DEPLOY_HOOK to publish daily.'
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           include-hidden-files: true
