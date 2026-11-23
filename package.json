@@ -31,13 +31,13 @@
     "content:import": "node scripts/import-content.mjs"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/sitemap": "^3.7.6",
     "@fontsource-variable/dm-sans": "^5.3.0",
     "@fontsource-variable/outfit": "^5.3.0",
-    "astro": "^7.3.8",
+    "astro": "^7.4.13",
     "gray-matter": "^4.0.3",
-    "marked": "^18.1.1",
-    "sanitize-html": "^2.18.0",
+    "marked": "^18.2.1",
+    "sanitize-html": "^2.18.2",
     "sharp": "^0.35.5"
   },
   "devDependencies": {
